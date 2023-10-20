@@ -101,7 +101,7 @@
                 "Content-Type": "application/json",
             },
             success: (data) => loadDataToView(data),
-            error: () => { alert("dmm") }
+            error: () => { alert("error") }
         });
 
         const loadDataToView = (data) => {
@@ -232,7 +232,8 @@
                 headers: {
                     "Content-Type": "application/json",
                 },
-                success: (data)=>LoadDataToTable(data)
+                success: (data)=>LoadDataToTable(data),
+                error : ()=>{$("#table").empty()}
             })
 
         }
