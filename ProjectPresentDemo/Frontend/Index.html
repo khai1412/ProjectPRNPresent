@@ -53,7 +53,7 @@
 
         <div style="margin-top:30px;margin-bottom:20px">
             <button type="button" onclick="onClickAddProduct()" class="btn btn-secondary">ADD</button>
-            <button type="button" class="btn btn-secondary">UPDATE</button>
+            <button type="button" onclick="updateProduct()" class="btn btn-secondary">UPDATE</button>
         </div>
     </form>
 
@@ -133,7 +133,9 @@
 
         const LoadDataToTable = (data) => {
             $("#table").empty();
+
             data.forEach(element => {
+                const json = JSON.stringify(element);
                 var html = `
         <tr>
         <td>${element.productId}</td>
@@ -144,7 +146,7 @@
         <td>${element.categoryId}</td>
         <td id="${element.productId}">
             <button onclick = "onClickDelete(${element.productId})" type="button" class="btn btn-outline-dark">Delete</button>
-            <button onclick = "loadDetail(${element})" type="button" class="btn btn-outline-dark">Detail</button>
+            <button onclick = 'loadDetail(${JSON.stringify(element)})' type="button" class="btn btn-outline-dark">Detail</button>
         </td>
        </tr>`
                 $("#table").append(html)
@@ -178,21 +180,53 @@
                 "Content-Type": "application/json",
             },
             data: id,
-            success : ()=>getProduct()
+            success: () => getProduct()
         })
 
-        const onClickDelete = (productId)=>{
+        const onClickDelete = (productId) => {
             deleteProduct(productId);
         }
 
-        const loadDetail = (element)=>{
+        const loadDetail = (element) => {
+            console.log(element)
             $("#ProductId").val(element.productId),
-            $("#ProductName").val(element.productName),
-            $("#UnitPrice").val(element.unitPrice),
-            $("#UnitsInStock").val(element.unitsInStock),
-            $("#Image").val(element.image),
-            $("#CategoryId").val(element.categoryId)
+                $("#ProductName").val(element.productName),
+                $("#UnitPrice").val(element.unitPrice),
+                $("#UnitsInStock").val(element.unitsInStock),
+                $("#Image").val(element.image),
+                $("#CategoryId").val(element.categoryId)
         }
+
+        const getProductData = () => $.ajax({
+            url: ``,
+            type: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            success: (data) => LoadDataToTable(),
+            error: (error) => {
+                console.log(error);
+            }
+        })
+
+        const updateProduct = () => $.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify({
+                productId:$("#ProductId").val(),
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            }),
+            success: getProduct()
+        })
+        
+
     </script>
 
 
