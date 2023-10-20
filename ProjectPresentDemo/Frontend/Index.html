@@ -144,7 +144,7 @@
         <td>${element.categoryId}</td>
         <td id="${element.productId}">
             <button onclick = "onClickDelete(${element.productId})" type="button" class="btn btn-outline-dark">Delete</button>
-            <button onclick = "loadDetail(${JSON.parse(JSON.stringify(element))})" type="button" class="btn btn-outline-dark">Detail</button>
+            <button onclick = "loadDetail(${element})" type="button" class="btn btn-outline-dark">Detail</button>
         </td>
        </tr>`
                 $("#table").append(html)
@@ -186,12 +186,12 @@
         }
 
         const loadDetail = (element)=>{
-            $("#ProductId").val = element.productId,
-            $("#ProductName").val = element.productName,
-            $("#UnitPrice").val = element.unitPrice,
-            $("#UnitsInStock").val = element.unitsInStock,
-            $("#Image").val = element.image,
-            $("#CategoryId").val = element.categoryId
+            $("#ProductId").val(element.productId),
+            $("#ProductName").val(element.productName),
+            $("#UnitPrice").val(element.unitPrice),
+            $("#UnitsInStock").val(element.unitsInStock),
+            $("#Image").val(element.image),
+            $("#CategoryId").val(element.categoryId)
         }
     </script>
 
