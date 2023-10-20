@@ -30,11 +30,19 @@ namespace ProjectPresentDemo.Controllers
         [HttpPost]
         public IActionResult CreateProduct(ProductDTO? productDTO) {
             if(productDTO == null) return BadRequest();
-            if (this.context.Products.Any(e=>e.ProductId.Equals(productDTO.ProductId))&&!this.context.Categories.Any(e => e.CategoryId.Equals(productDTO.CategoryId))) return BadRequest();
-            var newProduct = productDTO.GetEntity();
-            this.context.Products.Add(newProduct);
-            this.context.SaveChanges();
-            return Ok(productDTO);
+            try
+            {
+                if (this.context.Products.Any(e => e.ProductId.Equals(productDTO.ProductId)) && !this.context.Categories.Any(e => e.CategoryId.Equals(productDTO.CategoryId))) return BadRequest();
+                var newProduct = productDTO.GetEntity();
+                this.context.Products.Add(newProduct);
+                this.context.SaveChanges();
+                return Ok(productDTO);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
         }
         [HttpPut]
         public IActionResult UpdateProduct(ProductDTO productDTO)

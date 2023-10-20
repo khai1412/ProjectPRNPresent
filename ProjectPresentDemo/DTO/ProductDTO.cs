@@ -15,6 +15,7 @@ namespace ProjectPresentDemo.DTO
         public string? Image { get; set; }
 
         public int? CategoryId { get; set; }
+        public string? CategoryName { get; set; }
         public ProductDTO(Product product) {
             this.ProductId = product.ProductId;
             this.ProductName = product?.ProductName;
@@ -22,6 +23,8 @@ namespace ProjectPresentDemo.DTO
             this.UnitsInStock = product?.UnitsInStock;
             this.Image = product?.Image;
             this.CategoryId = product?.CategoryId;
+            var context = new MySaleDbContext();
+            this.CategoryName = context.Categories.FirstOrDefault(e=>e.CategoryId==product.CategoryId)?.CategoryName;
         }
         public ProductDTO()
         {

@@ -16,7 +16,7 @@
 
 <body>
 
-    <h1 class="text-center">CATEGORY</h1>
+    <h1 class="text-center">DEMO</h1>
 
     <form method="post" enctype="multipart/form-data">
         <div class="row">
@@ -55,10 +55,6 @@
             <button type="button" onclick="onClickAddProduct()" class="btn btn-secondary">ADD</button>
             <button type="button" class="btn btn-secondary">UPDATE</button>
         </div>
-        <!-- @* <div class="d-flex">
-            <input type="file" name="inputfile" />
-            <button type="submit" class="btn btn-secondary">Import</button>
-        </div>*@ -->
     </form>
 
     <select id="option">
@@ -136,6 +132,7 @@
         })
 
         const LoadDataToTable = (data) => {
+            $("#table").empty();
             data.forEach(element => {
                 var html = `
         <tr>
@@ -146,9 +143,8 @@
         <td>${element.image}</td>
         <td>${element.categoryId}</td>
         <td id="${element.productId}">
-            <form method="post">
-                <button type="submit" class="btn btn-outline-dark">Delete</button>
-            </form>
+            <button onclick = "onClickDelete(${element.productId})" type="button" class="btn btn-outline-dark">Delete</button>
+            <button onclick = "loadDetail(${JSON.parse(JSON.stringify(element))})" type="button" class="btn btn-outline-dark">Detail</button>
         </td>
        </tr>`
                 $("#table").append(html)
@@ -165,17 +161,38 @@
         })
 
         const onClickAddProduct = () => {
-                createProduct({
-                    productName: $("#ProductName").val(),
-                    unitPrice: $("#UnitPrice").val(),
-                    unitsInStock : $("#UnitsInStock").val(),
-                    image : $("#Image").val(),
-                    categoryId : $("#CategoryId").val()
-                });
-                getProduct()
-            }
+            createProduct({
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            });
+            getProduct()
+        }
 
+        const deleteProduct = (id) => $.ajax({
+            url: `http://localhost:5276/api/Product?productId=${id}`,
+            type: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: id,
+            success : ()=>getProduct()
+        })
 
+        const onClickDelete = (productId)=>{
+            deleteProduct(productId);
+        }
+
+        const loadDetail = (element)=>{
+            $("#ProductId").val = element.productId,
+            $("#ProductName").val = element.productName,
+            $("#UnitPrice").val = element.unitPrice,
+            $("#UnitsInStock").val = element.unitsInStock,
+            $("#Image").val = element.image,
+            $("#CategoryId").val = element.categoryId
+        }
     </script>
 
 
