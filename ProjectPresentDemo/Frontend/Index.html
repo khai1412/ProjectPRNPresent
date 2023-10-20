@@ -133,7 +133,9 @@
 
         const LoadDataToTable = (data) => {
             $("#table").empty();
+            
             data.forEach(element => {
+                const json = JSON.stringify(element);
                 var html = `
         <tr>
         <td>${element.productId}</td>
@@ -144,9 +146,9 @@
         <td>${element.categoryId}</td>
         <td id="${element.productId}">
             <button onclick = "onClickDelete(${element.productId})" type="button" class="btn btn-outline-dark">Delete</button>
-            <button onclick = "loadDetail(${JSON.parse(JSON.stringify(element))})" type="button" class="btn btn-outline-dark">Detail</button>
+            <button onclick = 'loadDetail(${JSON.stringify(element)})' type="button" class="btn btn-outline-dark">Detail</button>
         </td>
-       </tr>`
+       </tr>` 
                 $("#table").append(html)
             })
         }
@@ -185,14 +187,29 @@
             deleteProduct(productId);
         }
 
-        const loadDetail = (element)=>{
-            $("#ProductId").val = element.productId,
-            $("#ProductName").val = element.productName,
-            $("#UnitPrice").val = element.unitPrice,
-            $("#UnitsInStock").val = element.unitsInStock,
-            $("#Image").val = element.image,
-            $("#CategoryId").val = element.categoryId
+        const loadDetail = (element) => {
+            console.log(element)
+            $("#ProductId").val(element.productId),
+            $("#ProductName").val(element.productName),
+            $("#UnitPrice").val(element.unitPrice),
+            $("#UnitsInStock").val(element.unitsInStock),
+            $("#Image").val(element.image),
+            $("#CategoryId").val(element.categoryId) 
         }
+
+        const getProductData = () => $.ajax({
+            url: ``,
+            type: "GET",
+            headers: {
+                "Content-Type" : "application/json",
+            },
+            success: (data) => LoadDataToTable(),
+            error: (error) => {
+                console.log(error);
+            }
+        })
+           
+
     </script>
 
 
