@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+        integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <script src="js/config.js" type="module"></script>
+    <script src="js/index.js" type="module"></script>
+
+</head>
+
+<body>
+
+    <h1 class="text-center">DEMO</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div>
+                <label>ProductId: </label>
+                <input readOnly=true name="ProductId" id="ProductId" />
+            </div>
+
+            <div>
+                <label>ProductName: </label>
+                <input name="ProductName" id="ProductName" />
+            </div>
+
+            <div>
+                <label>UnitPrice: </label>
+                <input name="UnitPrice" id="UnitPrice" />
+            </div>
+
+            <div>
+                <label>UnitsInStock: </label>
+                <input name="UnitsInStock" id="UnitsInStock" />
+            </div>
+
+            <div>
+                <label>Image: </label>
+                <input name="Image" id="Image" />
+            </div>
+
+            <div>
+                <label>CategoryId: </label>
+                <input name="CategoryId" id="CategoryId" />
+            </div>
+        </div>
+
+        <div style="margin-top:30px;margin-bottom:20px">
+            <button type="button" onclick="XMLonClickAddProduct()" class="btn btn-secondary">ADD</button>
+            <button type="button" onclick="onClickUpdateProduct()" class="btn btn-secondary">UPDATE</button>
+        </div>
+    </form>
+
+    <select id="option">
+        <!-- @foreach (var item in Model.fullCategories)
+        {
+            <option value="@item.CategoryName" selected=@(Model.categories.First().CategoryName == item.CategoryName)>@item.CategoryName</option>
+        } -->
+        <option value="all">All</option>
+    </select>
+
+
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ProductId</th>
+                <th>ProductName</th>
+                <th>UnitPrice</th>
+                <th>UnitsInStock</th>
+                <th>Image</th>
+                <th>CategoryId</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="table">
+
+        </tbody>
+    </table>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(document).ready(() => {
+            XMLloadCategory();
+            XMLloadProduct();
+        })
+
+        function XMLloadCategory() {
+            const xhttpr = new XMLHttpRequest();
+            xhttpr.open('GET', 'http://localhost:5276/api/Category', true);
+            xhttpr.send();
+            xhttpr.onload = () => {
+                if (xhttpr.status === 200) {
+                    const response = JSON.parse(xhttpr.response);
+                    response.forEach(element => {
+                        var html =
+                            `
+                <option value="${element.categoryId}">${element.categoryName}</option>
+                `;
+                        $("#option").append(html);
+                    })
+
+                } else {
+
+                }
+            };
+        }
+
+        var loadCategory = () => {
+            $.ajax({
+                url: "http://localhost:5276/api/Category",
+                type: "GET",
+                contentType: "application/json",
+                success: (data) => {
+                    data.forEach(element => {
+                        console.log(element)
+                        var html =
+                            `
+                <option value="${element.categoryId}">${element.categoryName}</option>
+                `;
+                        $("#option").append(html);
+                    })
+                }
+            })
+        }
+
+        var loadProduct = () => {
+            $.ajax({
+                url: "http://localhost:5276/api/Product",
+                type: "GET",
+                contentType: "application/json",
+                success: (data) => {
+                    data.forEach(element => {
+                        var html = `
+                        <tr>
+                <td>${element.productId}</td>
+                <td>${element.productName}</td>
+                <td>${element.unitPrice}</td>
+                <td>${element.unitsInStock}</td>
+                <td>${element.image}</td>
+                <td>${element.categoryId}</td>
+                <td id="${element.productId}">                    
+                    <button onclick="onClickDelete(${element.productId})" type="button"
+                        class="btn btn-outline-dark">Delete</button>
+                    <button onclick='loadDetail(${JSON.stringify(element)})' type="button"
+                        class="btn btn-outline-dark">Detail</button>
+                </td>
+            </tr>
+                    `
+                        $("#table").append(html)
+                    });
+                }
+            })
+        }
+        function XMLloadProduct() {
+            const xhttpr = new XMLHttpRequest();
+            xhttpr.open('GET', 'http://localhost:5276/api/Product', true);
+            xhttpr.send();
+            xhttpr.onload = () => {
+                if (xhttpr.status === 200) {
+                    const response = JSON.parse(xhttpr.response);
+                    response.forEach(element => {
+                        var html = `
+                        <tr>
+                <td>${element.productId}</td>
+                <td>${element.productName}</td>
+                <td>${element.unitPrice}</td>
+                <td>${element.unitsInStock}</td>
+                <td>${element.image}</td>
+                <td>${element.categoryId}</td>
+                <td id="${element.productId}">                    
+                    <button onclick="onClickDelete(${element.productId})" type="button"
+                        class="btn btn-outline-dark">Delete</button>
+                    <button onclick='loadDetail(${JSON.stringify(element)})' type="button"
+                        class="btn btn-outline-dark">Detail</button>
+                </td>
+            </tr>
+                    `
+                        $("#table").append(html)
+                    })
+
+                } else {
+
+                }
+            };
+        }
+
+
+        var onClickDelete = (productId) => {
+            $.ajax({
+                url: `http://localhost:5276/api/Product?productId=${productId}`,
+                type: "delete",
+                contentType: "application/json",
+                data: productId,
+                success: (() => {
+                    $("#table").empty();
+                    loadProduct();
+                })
+            })
+        }
+        var onClickAddProduct = () => $.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify({
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            }),
+            success: (() => {
+                $("#table").empty();
+                loadProduct();
+            })
+        })
+
+        var XMLonClickAddProduct = () => {
+            var xhttp = new XMLHttpRequest();
+
+            var data = {                
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            };
+            // var data = new FormData();
+            // data.append("productName", $("#ProductName").val());
+            // data.append("unitPrice", $("#UnitPrice").val());
+            // data.append("unitsInStock", $("#UnitsInStock").val());
+            // data.append("image", $("#Image").val());
+            // data.append("categoryId", $("#CategoryId").val());
+
+            xhttp.open('POST', 'http://localhost:5276/api/Product', true);
+            xhttp.setRequestHeader('Content-type', 'application/json');
+
+            //xhttp.setRequestHeader("Content-Type", "application/json");
+
+            xhttp.onreadystatechange = function () {
+                if (xhttp.readyState === 4) {
+                    if (xhttp.status === 200) {
+                        $("#table").empty();
+                        loadProduct();
+                    } else {
+                        console.log("Error");
+                    }
+                }
+            };
+
+            xhttp.send(JSON.stringify(data));
+        }
+        var onClickUpdateProduct = () => $.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify({
+                productId: $("#ProductId").val(),
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            }),
+            success: (() => {
+                $("#table").empty();
+                loadProduct();
+            })
+        })
+        var loadDetail = (element) => {
+            $("#ProductId").val(element.productId);
+            $("#ProductName").val(element.productName);
+            $("#UnitPrice").val(element.unitPrice);
+            $("#UnitsInStock").val(element.unitsInStock);
+            $("#Image").val(element.image);
+            $("#CategoryId").val(element.categoryId);
+        }
+    </script>
+
+
+</body>
+
+</html>

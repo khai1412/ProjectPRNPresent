@@ -105,18 +105,6 @@
         });
 
         const loadDataToView = (data) => {
-
-            // [
-            //   {
-            //     "categoryId": 1,
-            //     "categoryName": "Laptop"
-            //   },
-            //   {
-            //     "categoryId": 2,
-            //     "categoryName": "PC"
-            //   },
-            // ]
-
             data.forEach(element => {
                 $("#option").append(`<option value=${element.categoryName}>${element.categoryName}</option>`)
             });
@@ -144,20 +132,21 @@
         <td>${element.categoryId}</td>
         <td id="${element.productId}">
             <button onclick = "onClickDelete(${element.productId})" type="button" class="btn btn-outline-dark">Delete</button>
-            <button onclick = "loadDetail(${JSON.parse(JSON.stringify(element))})" type="button" class="btn btn-outline-dark">Detail</button>
+            <button onclick = 'loadDetail(${JSON.stringify(element)})' type="button" class="btn btn-outline-dark">Detail</button>            
         </td>
        </tr>`
                 $("#table").append(html)
             })
         }
 
-        const createProduct = (data) => $.ajax({
+        const createProduct = (data,callback) => $.ajax({
             url: `http://localhost:5276/api/Product`,
             type: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            data: JSON.stringify(data)
+            data: JSON.stringify(data),
+            success : () => callback()
         })
 
         const onClickAddProduct = () => {
@@ -167,8 +156,8 @@
                 unitsInStock: $("#UnitsInStock").val(),
                 image: $("#Image").val(),
                 categoryId: $("#CategoryId").val()
-            });
-            getProduct()
+            },getProduct);
+            
         }
 
         const deleteProduct = (id) => $.ajax({
@@ -185,13 +174,14 @@
             deleteProduct(productId);
         }
 
-        const loadDetail = (element)=>{
-            $("#ProductId").val = element.productId,
-            $("#ProductName").val = element.productName,
-            $("#UnitPrice").val = element.unitPrice,
-            $("#UnitsInStock").val = element.unitsInStock,
-            $("#Image").val = element.image,
-            $("#CategoryId").val = element.categoryId
+        const loadDetail = (element) => {
+            console.log(element)
+            $("#ProductId").val(element.productId),
+            $("#ProductName").val(element.productName),
+            $("#UnitPrice").val(element.unitPrice),
+            $("#UnitsInStock").val(element.unitsInStock),
+            $("#Image").val(element.image),
+            $("#CategoryId").val(element.categoryId) 
         }
     </script>
 
