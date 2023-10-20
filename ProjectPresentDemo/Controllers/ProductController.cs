@@ -24,7 +24,7 @@ namespace ProjectPresentDemo.Controllers
         public IActionResult GetAllProductByCategory(string? categoryName)
         {
             var result = this.context.Products.Where(e => e.Category.CategoryName.Equals(categoryName)).Select(e => new ProductDTO(e)).ToList();
-            if (result.Count == 0) return NotFound();
+            if (result.Count == 0) return Ok(this.context.Products.Select(e=>new ProductDTO(e)).ToList());
             return Ok(result);
         }
         [HttpPost]

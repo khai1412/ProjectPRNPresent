@@ -52,17 +52,17 @@
         </div>
 
         <div style="margin-top:30px;margin-bottom:20px">
-            <button type="button" onclick="onClickAddProduct()" class="btn btn-secondary">ADD</button>
+            <button type="button" onclick="createProduct()" class="btn btn-secondary">ADD</button>
             <button type="button" onclick="updateProduct()" class="btn btn-secondary">UPDATE</button>
         </div>
     </form>
 
-    <select id="option">
+    <select onchange="LoadOption()" id="option">
         <!-- @foreach (var item in Model.fullCategories)
         {
             <option value="@item.CategoryName" selected=@(Model.categories.First().CategoryName == item.CategoryName)>@item.CategoryName</option>
         } -->
-        <option value="all">All</option>
+        <option selected value="all">All</option>
     </select>
 
 
@@ -159,20 +159,17 @@
             headers: {
                 "Content-Type": "application/json",
             },
-            data: JSON.stringify(data)
-        })
-
-        const onClickAddProduct = () => {
-            createProduct({
+            data: JSON.stringify({
                 productName: $("#ProductName").val(),
                 unitPrice: $("#UnitPrice").val(),
                 unitsInStock: $("#UnitsInStock").val(),
                 image: $("#Image").val(),
                 categoryId: $("#CategoryId").val()
-            });
-            getProduct()
-        }
+            }),
+            success: getProduct()
+        })
 
+    
         const deleteProduct = (id) => $.ajax({
             url: `http://localhost:5276/api/Product?productId=${id}`,
             type: "DELETE",
@@ -216,7 +213,7 @@
                 "Content-Type": "application/json",
             },
             data: JSON.stringify({
-                productId:$("#ProductId").val(),
+                productId: $("#ProductId").val(),
                 productName: $("#ProductName").val(),
                 unitPrice: $("#UnitPrice").val(),
                 unitsInStock: $("#UnitsInStock").val(),
@@ -225,7 +222,21 @@
             }),
             success: getProduct()
         })
-        
+
+        var LoadOption = () => {
+            var value = $("#option").find(":selected").val()
+            console.log(value)
+            $.ajax({
+                url: `http://localhost:5276/api/Product/categoryName?categoryName=${value}`,
+                type: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                success: (data)=>LoadDataToTable(data)
+            })
+
+        }
+
 
     </script>
 
