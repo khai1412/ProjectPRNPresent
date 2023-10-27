@@ -9,9 +9,7 @@
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"
         integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
-    <script src="js/config.js" type="module"></script>
-    <script src="js/index.js" type="module"></script>
-
+ 
 </head>
 
 <body>
@@ -57,7 +55,7 @@
         </div>
     </form>
 
-    <select onchange="LoadOption()" id="option">
+    <select onchange="" id="option">
         <!-- @foreach (var item in Model.fullCategories)
         {
             <option value="@item.CategoryName" selected=@(Model.categories.First().CategoryName == item.CategoryName)>@item.CategoryName</option>
@@ -89,7 +87,110 @@
         crossorigin="anonymous"></script>
 
     <script>
-        
+        $(document).ready(()=>{
+            getCategory()
+            getProduct()
+        })
+        var getCategory = () => $.ajax({
+            url: `http://localhost:5276/api/Category`,
+            type: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            success: (data) => loadDataToCategoryOption(data),
+            error: () => { alert("error") }
+        });
+        const loadDataToCategoryOption = (data)=>{
+            data.forEach(element=>{
+                $("#option").append(`<option value="${element.categoryName}">${element.categoryName}</option>`)
+            })
+        }
+
+        const getProduct = ()=>$.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            success: (data) => LoadDataToTable(data),
+            error: () => { alert("error") }
+        });
+
+        const LoadDataToTable = (data) => {
+            $("#table").empty();
+            data.forEach(element => {
+                var html = `
+        <tr>
+        <td>${element.productId}</td>
+        <td>${element.productName}</td>
+        <td>${element.unitPrice}</td>
+        <td>${element.unitsInStock}</td>
+        <td>${element.image}</td>
+        <td>${element.categoryId}</td>
+        <td id="${element.productId}">
+            <button onclick = "deleteProduct(${element.productId})"  type="button" class="btn btn-outline-dark">Delete</button>
+            <button onclick = 'loadDetail(${JSON.stringify(element)})' type="button" class="btn btn-outline-dark">Detail</button>
+        </td>
+       </tr>`
+                $("#table").append(html)
+            })
+        }
+
+        const createProduct = ()=>$.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify({
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            }),
+            success: () => getProduct(),
+            error: () => { alert("error") }
+        });
+
+        const deleteProduct = (id)=>$.ajax({
+            url: `http://localhost:5276/api/Product?productId=${id}`,
+            type: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            success: () => getProduct(),
+            error: () => { alert("error") }
+        });
+
+        const loadDetail = (element) => {
+            console.log(element)
+            $("#ProductId").val(element.productId),
+                $("#ProductName").val(element.productName),
+                $("#UnitPrice").val(element.unitPrice),
+                $("#UnitsInStock").val(element.unitsInStock),
+                $("#Image").val(element.image),
+                $("#CategoryId").val(element.categoryId)
+        }
+
+        const updateProduct = () => $.ajax({
+            url: `http://localhost:5276/api/Product`,
+            type: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            data: JSON.stringify({
+                productId: $("#ProductId").val(),
+                productName: $("#ProductName").val(),
+                unitPrice: $("#UnitPrice").val(),
+                unitsInStock: $("#UnitsInStock").val(),
+                image: $("#Image").val(),
+                categoryId: $("#CategoryId").val()
+            }),
+            success: getProduct()
+        })
+
+
 
 
     </script>
